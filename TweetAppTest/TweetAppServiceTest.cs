@@ -50,6 +50,28 @@ namespace TweetAppTest
         }
 
         /// <summary>
+        /// Mock Testing for PostTweet Method of TweetService
+        /// </summary>
+        [Fact]
+        public async Task PostTweet_Test()
+        {
+            Tweet tweet = new Tweet
+            {
+                Id = 1,
+                UserId = 3,
+                Username = "akanksha",
+                FirstName = "Akanksha",
+                LastName = "Sahu",
+                Tweets = "Heloo World",
+                TweetDate = System.DateTime.Now
+            };
+            _mockTweetRepo.Setup(x => x.PostTweet(It.IsAny<Tweet>())).ReturnsAsync(2);
+            var result = await _tweetAppService.PostTweet(tweet);
+            Assert.Equal("\"Posted\"", result);
+            _mockTweetRepo.Verify(x => x.PostTweet(It.IsAny<Tweet>()), Times.Once);
+        }
+
+        /// <summary>
         /// Mock Testing for GetAllTweets Method of TweetService
         /// </summary>
         [Fact]
@@ -79,6 +101,23 @@ namespace TweetAppTest
             Assert.Equal(tweets[0].TweetDate, result[0].TweetDate);
             Assert.Equal(tweets[0].Imagename, result[0].Imagename);
             _mockTweetRepo.Verify(X => X.GetAllTweets(), Times.Once);
+        }
+
+        /// <summary>
+        /// Mock Testing for Comments Method of TweetService
+        /// </summary>
+        [Fact]
+        public async Task Comments_Test()
+        {
+            string username = "akanksha";
+            string userName = "bijin";
+            string comment = "Hello World";
+            string tweet = "Hello Akanksha";
+            DateTime time = DateTime.Now;
+            _mockTweetRepo.Setup(x => x.Comments(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>())).ReturnsAsync(2);
+            var result = await _tweetAppService.Comments(comment, username, userName, tweet);
+            Assert.Equal(2, result);
+            _mockTweetRepo.Verify(x => x.Comments(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()), Times.Once());
         }
 
         /// <summary>
@@ -112,8 +151,11 @@ namespace TweetAppTest
         /// <summary>
         /// Mock Testing for GetTweetsByUser Method of TweetService
         /// </summary>
-        [Fact]
-        public async Task GetTweetsByUser_Test()
+        [Theory]
+        [InlineData("akanksha")]
+        [InlineData("bijin")]
+        [InlineData("Navya")]
+        public async Task GetTweetsByUser_Test(string username_param)
         {
             UserTweets tweet = new UserTweets
             {
@@ -128,7 +170,8 @@ namespace TweetAppTest
             List<UserTweets> userTweets = new List<UserTweets>();
             userTweets.Add(tweet);
 
-            string username = "bijin@gmail.com";
+            string username = username_param;
+
             _mockTweetRepo.Setup(x => x.GetTweetsByUser(It.IsAny<string>())).ReturnsAsync(userTweets);
 
             var result = await _tweetAppService.GetTweetsByUser(username);
@@ -147,8 +190,11 @@ namespace TweetAppTest
         /// <summary>
         /// Mock Testing for GetUserProfile Method of TweetService
         /// </summary>
-        [Fact]
-        public async Task GetUserProfile_Test()
+        [Theory]
+        [InlineData("akanksha")]
+        [InlineData("bijin")]
+        [InlineData("Navya")]
+        public async Task GetUserProfile_Test(string username_param)
         {
             User user = new User
             {
@@ -162,7 +208,9 @@ namespace TweetAppTest
                 Tweet = new List<Tweet>(),
                 ImageName = "image.jpeg"
             };
-            string username = "bijin@gmail.com";
+
+            string username = username_param;
+
             _mockTweetRepo.Setup(x => x.GetUserProfile(It.IsAny<string>())).ReturnsAsync(user);
 
             var result = await _tweetAppService.GetUserProfile(username);
@@ -176,11 +224,13 @@ namespace TweetAppTest
         /// <summary>
         /// Mock Testing for Likes Method of TweetService
         /// </summary>
-        [Fact]
-        public async Task Likes_Test()
+        [Theory]
+        [InlineData("akanksha", "Hello World")]
+        [InlineData("bijin", "Hello World")]
+        public async Task Likes_Test(string username_param, string tweet_param)
         {
-            string username = "Bijin@gmail.com";
-            string tweet = "Hello World";
+            string username = username_param;
+            string tweet = tweet_param;
             _mockTweetRepo.Setup(x => x.Likes(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(2);
 
             var result = await _tweetAppService.Likes(username, tweet);
@@ -189,6 +239,9 @@ namespace TweetAppTest
             _mockTweetRepo.Verify(x => x.Likes(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
 
+        /// <summary>
+        /// Mock Testing for UpdatePassword Method of TweetService
+        /// </summary>
         [Fact]
         public async Task UpdatePassword_Test()
         {
@@ -201,6 +254,30 @@ namespace TweetAppTest
             Assert.NotNull(result);
             Assert.Equal("\"Updated Successfully\"", result);
             _mockTweetRepo.Verify(x => x.UpdatePassword(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+        }
+
+
+        /// <summary>
+        /// Mock Testing for Register Method of TweetService
+        /// </summary>
+        [Fact]
+        public async Task Register_Test()
+        {
+            User user = new User
+            {
+                UserId = 3,
+                Username = "bijin",
+                FirstName = "Bijin",
+                LastName = " Kurien",
+                Tweet = new List<Tweet>(),
+                Password = "Bijin@gmail.com",
+                ContactNumber = "8871147488"
+            };
+            _mockTweetRepo.Setup(x => x.Register(It.IsAny<User>())).ReturnsAsync(2);
+            var result = await _tweetAppService.Register(user);
+            Assert.NotNull(result);
+            Assert.Equal("Successfully registerd", result);
+            _mockTweetRepo.Verify(x => x.Register(It.IsAny<User>()), Times.Once);
         }
 
         /// <summary>
@@ -231,6 +308,21 @@ namespace TweetAppTest
             Assert.Equal(user.UserId, result.UserId);
             Assert.Equal(user.Username, result.Username);
             _mockTweetRepo.Verify(x => x.Login(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+        }
+
+        /// <summary>
+        /// Mock Testing for DeleteTweet Method of TweetService
+        /// </summary>
+        [Fact]
+        public async Task DeleteTweet_Test()
+        {
+            string userName = "bijin";
+            string tweet = "Hello Wolrd";
+            _mockTweetRepo.Setup(x => x.DeleteTweet(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(2);
+            var result = await _tweetAppService.DeleteTweet(userName, tweet);
+            Assert.NotNull(result);
+            Assert.Equal("\"Deleted\"", result);
+            _mockTweetRepo.Verify(x => x.DeleteTweet(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
     }
 }

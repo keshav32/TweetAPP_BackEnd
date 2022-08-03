@@ -376,6 +376,7 @@
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             //recommended is 5 min
             var expires = DateTime.Now.AddDays(Convert.ToDouble(this.configuration["JwtExpireDays"]));
+            // the issuer will be changed when the app is deployed in cloud as of now the issuer is local host becasue angular app is loaded in local host
             var token = new JwtSecurityToken(
                 this.configuration["JwtIssuer"],
                 this.configuration["JwtIssuer"],
