@@ -201,7 +201,7 @@ namespace TweetAppTest
                 UserId = 1,
                 FirstName = "Bijin",
                 LastName = "Kurien",
-                Username = "Bijin@gmail.com",
+                Username = username_param,
                 EmailId = "bijin@gmail.com",
                 ContactNumber = "8871147488",
                 Password = "Bijin@123",
