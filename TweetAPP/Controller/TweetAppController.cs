@@ -7,6 +7,7 @@
     using System.Text;
     using System.Threading.Tasks;
     using System.Web;
+    using Confluent.Kafka;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
@@ -53,6 +54,22 @@
                 this.logger.LogInformation("Controller Register Method - Started Successfully");
                 var result = await this.tweetAppService.Register(user);
                 this.logger.LogInformation("Controller Register Method - Finished Successfully");
+
+                using (var producer =
+                 new ProducerBuilder<Null, string>(new ProducerConfig { BootstrapServers = "localhost:9092" }).Build())
+                {
+                    try
+                    {
+                        Console.WriteLine(producer.ProduceAsync("tweetapp_topic", new Message<Null, string> { Value = user.Username + " Registered Successfully!" })
+                            .GetAwaiter()
+                            .GetResult());
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"Oops, something went wrong: {e}");
+                    }
+                }
+
                 return this.Ok(result);
 
             }
@@ -91,6 +108,22 @@
                     this.logger.LogInformation("Controller Token Method- Token Not Generated - Started Successfully");
                 }
                 this.logger.LogInformation("Controller Login Method - Finished Successfully");
+
+                using (var producer =
+                 new ProducerBuilder<Null, string>(new ProducerConfig { BootstrapServers = "localhost:9092" }).Build())
+                {
+                    try
+                    {
+                        Console.WriteLine(producer.ProduceAsync("tweetapp_topic", new Message<Null, string> { Value = username + " logged in!" })
+                            .GetAwaiter()
+                            .GetResult());
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"Oops, something went wrong: {e}");
+                    }
+                }
+
                 return this.Ok(token);
             }
             catch (Exception ex)
@@ -114,6 +147,22 @@
                 this.logger.LogInformation("Controller Post Tweet Method - Started Succesfully");
                 var result = await this.tweetAppService.PostTweet(tweet);
                 this.logger.LogInformation("Controller Post Tweet Method - Finished Succesfully");
+
+                using (var producer =
+                 new ProducerBuilder<Null, string>(new ProducerConfig { BootstrapServers = "localhost:9092" }).Build())
+                {
+                    try
+                    {
+                        Console.WriteLine(producer.ProduceAsync("tweetapp_topic", new Message<Null, string> { Value = tweet.Tweets + " posted successfully!" })
+                            .GetAwaiter()
+                            .GetResult());
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"Oops, something went wrong: {e}");
+                    }
+                }
+
                 return this.Ok(result);
             }
             catch (Exception ex)
@@ -304,6 +353,21 @@
                 this.logger.LogInformation("Controller Forgot Password Method - Started Succesfully");
                 var result = await this.tweetAppService.ForgotPassword(emailId, password);
                 this.logger.LogInformation("Controller Forgot Password Method - Finished Succesfully");
+
+                using (var producer =
+                 new ProducerBuilder<Null, string>(new ProducerConfig { BootstrapServers = "localhost:9092" }).Build())
+                {
+                    try
+                    {
+                        Console.WriteLine(producer.ProduceAsync("tweetapp_topic", new Message<Null, string> { Value = " Password Updated Successfully" })
+                            .GetAwaiter()
+                            .GetResult());
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"Oops, something went wrong: {e}");
+                    }
+                }
                 return this.Ok(result);
             }
             catch (Exception ex)
