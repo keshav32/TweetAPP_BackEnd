@@ -139,7 +139,7 @@
         /// <param name="tweet">tweet.</param>
         /// <returns>response.</returns>
         [HttpPost]
-        [Route("tweet")]
+        [Route("add")]
         public async Task<IActionResult> Tweet(Tweet tweet)
         {
             try
@@ -179,7 +179,7 @@
         /// <param name="tweet">tweet.</param>
         /// <returns>response.</returns>
         [HttpDelete]
-        [Route("tweetdelete/{username},{tweet}")]
+        [Route("delete/{username},{tweet}")]
         public async Task<IActionResult> DeleteTweet(string username, string tweet)
         {
             try
